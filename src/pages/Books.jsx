@@ -3,6 +3,7 @@ import { BookService } from "../service/BookService";
 import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import BookCopies from "../components/BookCopies";
+import ViewButton from "../components/Buttons/ViewButton";
 function BooksTable() {
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
@@ -32,7 +33,7 @@ function BooksTable() {
         <BookCopies selectedBook={selectedBook} goBack={goBack} />
       ) : (
         <div className="container mt-3 ">
-          <Table hover>
+          <Table hover style={{ fontSize: '18px' }}>
             <thead>
               <tr>
                 <th>Title</th>
@@ -47,7 +48,7 @@ function BooksTable() {
                   <td>{book.title}</td>
                   <td>{book.author}</td>
                   <td>{book.price_per_day}</td>
-                  <td><button onClick={() => showCopies(book)}>watch</button></td>
+                  <td> <ViewButton onClick={() => showCopies(book)}>watch </ViewButton></td>
                 </tr>
               ))}
             </tbody>
