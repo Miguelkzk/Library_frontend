@@ -5,13 +5,16 @@ import CopyModal from "./ModalCopies";
 import EditButton from "./Buttons/EditButton";
 import DeleteButton from "./Buttons/DeleteButton";
 import { BookCopyService } from "../service/BookCopyService";
+import ConfirmModal from "./ConfirmModal";
+import GoBack from "./Buttons/GoBack";
 
 
 function BookCopies({ selectedBook, goBack }) {
   const [copiesData, setCopiesData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCopy, setSelectedCopy] = useState(null);
-
+  const [idcopy_selected, setIdcopy_selected] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleShowModal = (copy) => {
     setSelectedCopy(copy);
     setShowModal(true);
@@ -25,10 +28,28 @@ function BookCopies({ selectedBook, goBack }) {
     await fetchCopies(selectedBook.id);
 
   };
-  const handleDeleteCopy = () => {
-    console.log("delete")
+  const handleCreateCopy = async (copy) => {
+    copy.book_id = selectedBook.id;
+    await BookCopyService.createCopy(copy);
+    await fetchCopies(selectedBook.id);
   }
 
+  const handleDeleteCopy = (copy) => {
+    setSelectedCopy(copy.id);
+    setIdcopy_selected(copy.id_copy)
+    setShowDeleteModal(true);
+  }
+  const handleConfirmDelete = async (id) => {
+    id = selectedCopy;
+    await BookCopyService.deleteCopy(id)
+    setShowDeleteModal(false)
+    await fetchCopies(selectedBook.id);
+
+  };
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedCopy(null);
+  };
   useEffect(() => {
     if (selectedBook) {
       fetchCopies(selectedBook.id);
@@ -75,7 +96,7 @@ function BookCopies({ selectedBook, goBack }) {
                 </EditButton>
               </td>
               <td>
-                <DeleteButton onClick={() => handleDeleteCopy(copy.id)}>
+                <DeleteButton onClick={() => handleDeleteCopy(copy)}>
                   Delete
                 </DeleteButton>
               </td>
@@ -85,12 +106,21 @@ function BookCopies({ selectedBook, goBack }) {
         </tbody>
       </Table>
       <div className="d-flex justify-content-center align-items-center">
-        <Button variant="primary" onClick={goBack}>Go Back to Books</Button>
+        <GoBack onClick={goBack} />
       </div>
+      <ConfirmModal
+        show={showDeleteModal}
+        handleClose={handleCancelDelete}
+        title="Confirmar Eliminación"
+        content={`¿Seguro que desea eliminar la copia con ID: ${idcopy_selected}?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
       <CopyModal
         show={showModal}
         handleClose={handleCloseModal}
         handleSave={handleSaveCopy}
+        handleCreate={handleCreateCopy}
         copy={selectedCopy}
       />
     </div>

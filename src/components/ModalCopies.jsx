@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import BookCopies from "./BookCopies";
 
-function CopyModal({ show, handleClose, handleSave, copy }) {
+function CopyModal({ show, handleClose, handleSave, handleCreate, copy }) {
   const [copyId, setCopyId] = useState("");
 
   // Use useEffect para actualizar el estado cuando el prop 'copy' cambia
@@ -21,7 +21,17 @@ function CopyModal({ show, handleClose, handleSave, copy }) {
 
   const onSave = () => {
     const updatedCopy = { ...copy, id_copy: copyId };
-    handleSave(updatedCopy);
+    if (copy == null) {
+      const copy = {
+        id_copy: copyId,
+        book_id: 0
+      }
+      handleCreate(copy)
+    }
+
+    else {
+      handleSave(updatedCopy);
+    }
     handleClose();
   };
 
