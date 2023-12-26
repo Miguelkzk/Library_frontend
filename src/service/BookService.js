@@ -9,6 +9,39 @@ export const BookService = {
     const response = await fetch(`${BASE_URL}/books/${id}/show_copies`);
     const data = await response.json();
     return data;
+  },
+  saveBook: async (book) => {
+    const response = await fetch(`${BASE_URL}/books/`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(book)
+      }
+    );
+    const data = await response.json();
+    return data;
+  },
+  updateBook: async (book) => {
+    const response = await fetch(`${BASE_URL}/books/${book.id}`,
+      {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(book)
+      }
+    );
+    const data = await response.json();
+    return data;
+  },
+  deleteBook: async (book) => {
+    const response = await fetch(`${BASE_URL}/books/${book.id}`,
+      {
+        method: "DELETE"
+      }
+    );
   }
 
 }

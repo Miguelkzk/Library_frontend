@@ -10,10 +10,10 @@ function ConfirmModal({ show, handleClose, title, content, onConfirm, onCancel }
       <Modal.Body>{content}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onCancel}>
-          Cancelar
+          Cancel
         </Button>
         <Button variant="primary" onClick={onConfirm}>
-          Confirmar
+          Confirm
         </Button>
       </Modal.Footer>
     </Modal>

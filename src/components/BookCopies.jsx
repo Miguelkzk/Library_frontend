@@ -111,8 +111,8 @@ function BookCopies({ selectedBook, goBack }) {
       <ConfirmModal
         show={showDeleteModal}
         handleClose={handleCancelDelete}
-        title="Confirmar Eliminación"
-        content={`¿Seguro que desea eliminar la copia con ID: ${idcopy_selected}?`}
+        title="Confirm delete"
+        content={`Are you sure you want to delete the copy with id: ${idcopy_selected}?`}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
