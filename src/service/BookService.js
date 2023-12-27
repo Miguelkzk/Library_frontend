@@ -42,7 +42,13 @@ export const BookService = {
         method: "DELETE"
       }
     );
+  },
+  serchBook: async (filters) => {
+    const response = await fetch(`${BASE_URL}/books/0/search_books?title=${filters.title}&author=${filters.author}`);
+    const data = await response.json();
+    return data;
   }
 
 }
+
 

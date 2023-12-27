@@ -8,6 +8,8 @@ import GenericModal from "../components/GenericModal";
 import EditButton from "../components/Buttons/EditButton";
 import DeleteButton from "../components/Buttons/DeleteButton";
 import ConfirmModal from "../components/ConfirmModal";
+import SearchButton from "../components/Buttons/SeachButton";
+import ClearButton from "../components/Buttons/ClearButton";
 function BooksTable() {
   const [books, setBooks] = useState([]);
   const [titleModal, setTitleModal] = useState('')
@@ -22,6 +24,10 @@ function BooksTable() {
     price_per_day: ''
   })
 
+  const [filters, setFilters] = useState({
+    title: '',
+    author: '',
+  })
 
   useEffect(() => {
     fetchBooks();
@@ -107,6 +113,18 @@ function BooksTable() {
     setBook(book)
     setShowDeleteModal(true)
   }
+  const handleSeach = async () => {
+    const filterbooks = await BookService.serchBook(filters)
+    setBooks(filterbooks)
+
+  }
+  const clearTitle = () => {
+    setFilters({ ...filters, title: '' })
+  }
+  const clearAuthor = () => {
+    setFilters({ ...filters, author: '' })
+  }
+
   const formContent = (
     <Form>
       <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -145,9 +163,36 @@ function BooksTable() {
       {selectedBook ? (
         <BookCopies selectedBook={selectedBook} goBack={goBack} />
       ) : (
-        <div className="container mt-3 ">
-          <Button onClick={handleOpenModal}>Add new book</Button>
-          <Table hover style={{ fontSize: '18px' }}>
+        <div className="container mt-4 ">
+          <div className=" d-flex justify-content-between align-items-center">
+            <Form className="d-flex position-relative">
+              <FormControl
+                type="text"
+                placeholder="Title"
+                className="mr-sm-2"
+                value={filters.title}
+                onChange={(e) =>
+                  setFilters({ ...filters, title: e.target.value })
+                }
+
+              />
+              {filters.title && (<ClearButton onClick={clearTitle} />)}
+              <FormControl
+                type="text"
+                placeholder="Author"
+                className="mr-sm-2"
+                value={filters.author}
+                onChange={(e) =>
+                  setFilters({ ...filters, author: e.target.value })
+                }
+                style={{ marginLeft: '2rem' }}
+              />
+              {filters.author && (<ClearButton onClick={clearAuthor} />)}
+              <SearchButton onClick={handleSeach} />
+            </Form>
+            <Button onClick={handleOpenModal} >Add book</Button>
+          </div>
+          <Table hover style={{ fontSize: '18px', marginTop: '2rem' }}>
             <thead>
               <tr>
                 <th>Title</th>
