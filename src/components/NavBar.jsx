@@ -15,6 +15,7 @@ function NavBar() {
           <Nav className="me-auto">
             <Navbar.Brand onClick={() => navigate('/')} >Books</Navbar.Brand>
             <Navbar.Brand onClick={() => navigate('/rental')} >Rental</Navbar.Brand>
+            <Navbar.Brand onClick={() => navigate('/clients')} >Clients</Navbar.Brand>
           </Nav>
         </Container>
       </Navbar>
