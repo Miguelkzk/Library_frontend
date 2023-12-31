@@ -28,6 +28,7 @@ function Clients() {
   useEffect(() => {
     fetchClients();
   }, []);
+
   const handleCloseModal = () => {
     setShowModal(false);
     setIsEdit(false)
