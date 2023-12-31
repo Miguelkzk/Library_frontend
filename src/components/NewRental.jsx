@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import GoBack from "./Buttons/GoBack";
 import enGB from 'date-fns/locale/en-GB';
 import './NewRental.css';
+import ClientModal from "./ClientModal";
 
 function formatDateForStorage(date) {
   return date.toISOString();
@@ -15,6 +16,7 @@ function NewRental({ goBack }) {
   const defaultEndDate = new Date();
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
+  const [showModal, setShowModal] = useState(false);
   const [rental, setRental] = useState({
     rent_id: '',
     rented_at: formatDateForStorage(defaultStartDate),
@@ -48,7 +50,14 @@ function NewRental({ goBack }) {
       [name]: value
     }));
   };
+  const handleOpenModal = () => {
+    setShowModal(true)
+    console.log(showModal)
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
 
+  }
   return (
     <div className="container mt-3" style={{ width: '50%' }}>
       <Form>
@@ -95,13 +104,18 @@ function NewRental({ goBack }) {
               onChange={handleInputChange}
             />
           </Form.Group>
-          <Button className="mt-3">New client</Button>
+          <Button className="mt-3" onClick={handleOpenModal}>New client</Button>
         </div>
         <Button variant="primary" onClick={handleSave}>
           Save Rental
         </Button>
       </Form>
       <GoBack onClick={goBack} />
+      <ClientModal
+      showModal={showModal}
+      handleClose={handleCloseModal}
+      title={'New client'}
+      onSave={""}/>
     </div>
   );
 }

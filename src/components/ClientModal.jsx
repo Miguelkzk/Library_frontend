@@ -1,15 +1,8 @@
-import { Form, FormControl } from "react-bootstrap";
-import GenericModal from "./GenericModal";
+import React from "react";
+import { Modal, Button, Form, FormControl } from "react-bootstrap";
 
-function ClientModal({ showModal }) {
-  const [showModal, setShowModal] = useState(false);
-  const handleCloseModal = () => {
-    setShowModal(false);
-    clearClient()
-  };
-  const handleSave = async () => {
-
-  };
+  
+function ClientModal({ showModal, handleClose, title, onSave}) {
   const formContent = (
     <Form>
       <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -17,8 +10,8 @@ function ClientModal({ showModal }) {
         <FormControl type="text"
           placeholder="Enter card id"
           name="card_id"
-          value={client.card_id}
-          onChange={handleInputChange}
+          value={""}
+          onChange={""}
         />
       </Form.Group>
 
@@ -27,8 +20,8 @@ function ClientModal({ showModal }) {
         <FormControl type="text"
           placeholder="Enter name"
           name="name"
-          value={client.name}
-          onChange={handleInputChange} />
+          value={""}
+          onChange={""} />
       </Form.Group>
 
       <Form.Group className="mb-3" >
@@ -36,8 +29,8 @@ function ClientModal({ showModal }) {
         <FormControl type="text"
           name="lastname"
           placeholder="Enter lastname"
-          value={client.lastname}
-          onChange={handleInputChange} />
+          value={""}
+          onChange={""} />
       </Form.Group>
 
       <Form.Group className="mb-3" >
@@ -45,8 +38,8 @@ function ClientModal({ showModal }) {
         <FormControl type="text"
           name="email"
           placeholder="Enter email"
-          value={client.email}
-          onChange={handleInputChange} />
+          value={""}
+          onChange={""} />
       </Form.Group>
 
       <Form.Group className="mb-3" >
@@ -54,18 +47,29 @@ function ClientModal({ showModal }) {
         <FormControl type="text"
           name="phone"
           placeholder="Enter phone"
-          value={client.phone}
-          onChange={handleInputChange} />
+          value={""}
+          onChange={""} />
       </Form.Group>
     </Form>
   );
   return (
-    <GenericModal
-      show={showModal}
-      handleClose={handleCloseModal}
-      title={titleModal}
-      formContent={formContent}
-      onSave={handleSave}
-    />
-  )
-} export default ClientModal;
+    <Modal show={showModal} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {formContent}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={onSave}>
+          Save
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+export default ClientModal;
