@@ -7,6 +7,7 @@ import enGB from 'date-fns/locale/en-GB';
 import './NewRental.css';
 import ClientModal from "./ClientModal";
 import SearchButton from "./Buttons/SeachButton";
+import { ClientService } from "../service/ClientService";
 
 function formatDateForStorage(date) {
   return date.toISOString();
@@ -25,6 +26,12 @@ function NewRental({ goBack }) {
     expire_at: formatDateForStorage(defaultEndDate),
     id_client: ''
   });
+  const [client, setClient]= useState({
+    id:'',
+    card_id: '',
+    name: '',
+    lastname: ''
+  })
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -41,9 +48,11 @@ function NewRental({ goBack }) {
       expire_at: formatDateForStorage(date)
     }));
   };
-  const searchClient = () => {
+  const searchClient = async() => {
     const filter = cardId
-    console.log(filter)
+    const client= await ClientService.searchClient(filter)
+    setClient(client[0])
+    console.log(client)
   }
 
   const handleSave = () => {
@@ -119,6 +128,7 @@ function NewRental({ goBack }) {
             <Button onClick={handleOpenModal} style={{ marginLeft: '12px' }}>New client</Button>
           </span>
         </div>
+        <p>Client: {client.name} {client.lastname}</p>
         <Button variant="primary" onClick={handleSave}>
           Save Rental
         </Button>

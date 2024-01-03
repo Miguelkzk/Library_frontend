@@ -38,5 +38,10 @@ export const ClientService = {
     );
     const data = await response.json();
     return data;
+  }, 
+  searchClient: async(filter) => {
+    const response = await fetch(`${BASE_URL}/clients/0/search_client?card_id=${filter}`);
+    const data = await response.json();
+    return data;
   }
 }
