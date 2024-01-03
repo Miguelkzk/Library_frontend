@@ -6,6 +6,7 @@ import GoBack from "./Buttons/GoBack";
 import enGB from 'date-fns/locale/en-GB';
 import './NewRental.css';
 import ClientModal from "./ClientModal";
+import SearchButton from "./Buttons/SeachButton";
 
 function formatDateForStorage(date) {
   return date.toISOString();
@@ -17,10 +18,12 @@ function NewRental({ goBack }) {
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
   const [showModal, setShowModal] = useState(false);
+  const [cardId, setCardId] = useState('')
   const [rental, setRental] = useState({
     rent_id: '',
     rented_at: formatDateForStorage(defaultStartDate),
-    expire_at: formatDateForStorage(defaultEndDate)
+    expire_at: formatDateForStorage(defaultEndDate),
+    id_client: ''
   });
 
   const handleStartDateChange = (date) => {
@@ -38,6 +41,10 @@ function NewRental({ goBack }) {
       expire_at: formatDateForStorage(date)
     }));
   };
+  const searchClient = () => {
+    const filter = cardId
+    console.log(filter)
+  }
 
   const handleSave = () => {
     console.log(rental);
@@ -57,6 +64,9 @@ function NewRental({ goBack }) {
   const handleCloseModal = () => {
     setShowModal(false);
 
+  }
+  const handleChange = (e) => {
+    setCardId(e.target.value)
   }
   return (
     <div className="container mt-3" style={{ width: '50%' }}>
@@ -94,17 +104,20 @@ function NewRental({ goBack }) {
           </Form.Group>
         </div>
         <div className="client">
-          <Form.Group className="mb-3" style={{ width: '75%' }}>
+          <Form.Group className="mb-3" style={{ width: '60%' }}>
             <Form.Label>Card Id</Form.Label>
             <FormControl
               type="text"
               placeholder="Enter the client's card id "
-              name="rent_id"
-              value={rental.rent_id}
-              onChange={handleInputChange}
+              name="id_client"
+              value={cardId}
+              onChange={handleChange}
             />
           </Form.Group>
-          <Button className="mt-3" onClick={handleOpenModal}>New client</Button>
+          <span className="mt-3">
+            <SearchButton onClick={searchClient} />
+            <Button onClick={handleOpenModal} style={{ marginLeft: '12px' }}>New client</Button>
+          </span>
         </div>
         <Button variant="primary" onClick={handleSave}>
           Save Rental
@@ -112,10 +125,10 @@ function NewRental({ goBack }) {
       </Form>
       <GoBack onClick={goBack} />
       <ClientModal
-      showModal={showModal}
-      handleClose={handleCloseModal}
-      title={'New client'}
-      onSave={""}/>
+        showModal={showModal}
+        handleClose={handleCloseModal}
+        title={'New client'}
+        onSave={""} />
     </div>
   );
 }
