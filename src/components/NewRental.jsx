@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// NewRental.js
+import React, { useState, useEffect } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +9,8 @@ import './NewRental.css';
 import ClientModal from "./ClientModal";
 import SearchButton from "./Buttons/SeachButton";
 import { ClientService } from "../service/ClientService";
+import { useAppState } from "./AppStateContext";
+import { useNavigate } from "react-router-dom";
 
 function formatDateForStorage(date) {
   return date.toISOString();
@@ -18,65 +21,102 @@ function NewRental({ goBack }) {
   const defaultEndDate = new Date();
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
-  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('')
   const [cardId, setCardId] = useState('')
-  const [rental, setRental] = useState({
-    rent_id: '',
-    rented_at: formatDateForStorage(defaultStartDate),
-    expire_at: formatDateForStorage(defaultEndDate),
-    id_client: ''
-  });
-  const [client, setClient]= useState({
-    id:'',
-    card_id: '',
-    name: '',
-    lastname: ''
-  })
+  const { state, dispatch } = useAppState();
+  const navigate = useNavigate();
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    setRental((prevRental) => ({
-      ...prevRental,
-      rented_at: formatDateForStorage(date)
-    }));
+    dispatch({
+      type: 'SET_RENTAL_DATA',
+      payload: {
+        ...state.rentalData,
+        rented_at: formatDateForStorage(date)
+      },
+    });
   };
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
-    setRental((prevRental) => ({
-      ...prevRental,
-      expire_at: formatDateForStorage(date)
-    }));
+    dispatch({
+      type: 'SET_RENTAL_DATA',
+      payload: {
+        ...state.rentalData,
+        expire_at: formatDateForStorage(date)
+      },
+    });
   };
-  const searchClient = async() => {
+
+  const searchClient = async () => {
     const filter = cardId
-    const client= await ClientService.searchClient(filter)
-    setClient(client[0])
-    console.log(client)
+    const dataClient = await ClientService.searchClient(filter)
+    if (dataClient != null) {
+      setError(false)
+      dispatch({
+        type: 'SET_CLIENT_DATA',
+        payload: {
+          id: dataClient.id,
+          card_id: dataClient.card_id,
+          name: dataClient.name,
+          lastname: dataClient.lastname,
+        },
+      });
+    }
+    else {
+      setError('Client not found')
+      dispatch({
+        type: 'SET_CLIENT_DATA',
+        payload: {
+          id: '',
+          card_id: '',
+          name: '',
+          lastname: '',
+        },
+      });
+    }
   }
 
   const handleSave = () => {
-    console.log(rental);
+    console.log(state.rentalData);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setRental((prevRental) => ({
-      ...prevRental,
-      [name]: value
-    }));
-  };
-  const handleOpenModal = () => {
-    setShowModal(true)
-    console.log(showModal)
-  };
-  const handleCloseModal = () => {
-    setShowModal(false);
+    dispatch({
+      type: 'SET_RENTAL_DATA',
+      payload: {
+        ...state.rentalData,
+        [name]: value,
+      },
+    });
 
-  }
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    dispatch({
+      type: 'SET_CLIENT_DATA',
+      payload: {
+        ...state.clientData,
+        [name]: value,
+      },
+    });
     setCardId(e.target.value)
-  }
+  };
+
+  const saveDates = () => {
+    // Puedes realizar alguna acción antes de navegar, si es necesario
+    navigate('/');
+  };
+
+  useEffect(() => {
+    // Inicializa las fechas solo si hay datos en el estado global
+    if (state.rentalData.rented_at && state.rentalData.expire_at) {
+      setStartDate(new Date(state.rentalData.rented_at));
+      setEndDate(new Date(state.rentalData.expire_at));
+    }
+  }, [state]);
   return (
     <div className="container mt-3" style={{ width: '50%' }}>
       <Form>
@@ -86,7 +126,7 @@ function NewRental({ goBack }) {
             type="text"
             placeholder="Enter rental ID"
             name="rent_id"
-            value={rental.rent_id}
+            value={state.rentalData.rent_id}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -118,27 +158,25 @@ function NewRental({ goBack }) {
             <FormControl
               type="text"
               placeholder="Enter the client's card id "
-              name="id_client"
-              value={cardId}
+              name="card_id"
+              value={state.clientData.card_id}
               onChange={handleChange}
             />
           </Form.Group>
           <span className="mt-3">
             <SearchButton onClick={searchClient} />
-            <Button onClick={handleOpenModal} style={{ marginLeft: '12px' }}>New client</Button>
+            <Button style={{ marginLeft: '12px' }}>New client</Button>
           </span>
         </div>
-        <p>Client: {client.name} {client.lastname}</p>
+        {error ? (
+          <p style={{ color: 'red', fontSize: '1.2rem', fontWeight: 'bold' }}>Error, client not found</p>
+        ) : (<p style={{ fontSize: '1rem' }}>Client: {state.clientData.name} {state.clientData.lastname}</p>)}
+        <Button variant="primary" onClick={saveDates}>Add copies</Button>
         <Button variant="primary" onClick={handleSave}>
           Save Rental
         </Button>
       </Form>
       <GoBack onClick={goBack} />
-      <ClientModal
-        showModal={showModal}
-        handleClose={handleCloseModal}
-        title={'New client'}
-        onSave={""} />
     </div>
   );
 }
