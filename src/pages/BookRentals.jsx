@@ -4,15 +4,23 @@ import { Button, Table } from "react-bootstrap";
 import ViewButton from "../components/Buttons/ViewButton";
 import RentalDetails from "../components/RentalDetails";
 import NewRental from "../components/NewRental";
-
+import { useLocation } from "react-router-dom";
 function BookRentals() {
   const [rentals, setRentals] = useState([]);
   const [selectRental, setSelectedRental] = useState(null)
   const [New, setNew] = useState(false);
-
+  const location = useLocation();
   useEffect(() => {
     fetchRentals();
-  }, []);
+  },);
+
+  useEffect(() => {
+    if (location.state && location.state.New) {
+      setNew(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
+
 
   const fetchRentals = async () => {
     const rentalData = await RetalService.getRentals()

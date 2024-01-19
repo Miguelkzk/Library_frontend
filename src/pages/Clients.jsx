@@ -6,6 +6,7 @@ import EditButton from "../components/Buttons/EditButton";
 import DeleteButton from "../components/Buttons/DeleteButton";
 import GenericModal from "../components/GenericModal";
 import ConfirmModal from "../components/ConfirmModal";
+import { useLocation } from "react-router-dom";
 
 function Clients() {
   const [clients, setClients] = useState([]);
@@ -13,6 +14,7 @@ function Clients() {
   const [titleModal, setTitleModal] = useState('')
   const [isedit, setIsEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const location = useLocation();
   const [client, setClient] = useState({
     id: '',
     card_id: '',
@@ -28,6 +30,13 @@ function Clients() {
   useEffect(() => {
     fetchClients();
   }, []);
+
+  useEffect(() => {
+    if (location.state && location.state.fromButton) {
+      handleOpenModal()
+    }
+  }, [location.state])
+
 
   const handleCloseModal = () => {
     setShowModal(false);

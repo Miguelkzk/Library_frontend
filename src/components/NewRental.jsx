@@ -6,25 +6,44 @@ import "react-datepicker/dist/react-datepicker.css";
 import GoBack from "./Buttons/GoBack";
 import enGB from 'date-fns/locale/en-GB';
 import './NewRental.css';
-import ClientModal from "./ClientModal";
 import SearchButton from "./Buttons/SeachButton";
 import { ClientService } from "../service/ClientService";
 import { useAppState } from "./AppStateContext";
 import { useNavigate } from "react-router-dom";
+import DeleteButton from "./Buttons/DeleteButton";
+import { RetalService } from "../service/RentalService";
 
 function formatDateForStorage(date) {
   return date.toISOString();
 }
-
+function clearObjectValues(obj) {
+  Object.keys(obj).forEach(key => {
+    obj[key] = ''; // O también puedes usar undefined
+  });
+}
 function NewRental({ goBack }) {
   const defaultStartDate = new Date();
   const defaultEndDate = new Date();
-  const [startDate, setStartDate] = useState(defaultStartDate);
-  const [endDate, setEndDate] = useState(defaultEndDate);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [error, setError] = useState('')
   const [cardId, setCardId] = useState('')
   const { state, dispatch } = useAppState();
+  const [price, setPrice] = useState();
   const navigate = useNavigate();
+
+  //Manejo de fechas
+
+  useEffect(() => {
+    // Inicializa las fechas solo si hay datos en el estado global
+    if (state.rentalData.rented_at && state.rentalData.expire_at) {
+      setStartDate(new Date(state.rentalData.rented_at));
+      setEndDate(new Date(state.rentalData.expire_at));
+    }
+    else return;
+
+  }, [state]);
+
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -48,6 +67,7 @@ function NewRental({ goBack }) {
     });
   };
 
+  //cliente
   const searchClient = async () => {
     const filter = cardId
     const dataClient = await ClientService.searchClient(filter)
@@ -76,10 +96,7 @@ function NewRental({ goBack }) {
       });
     }
   }
-
-  const handleSave = () => {
-    console.log(state.rentalData);
-  };
+  //datos del formulario
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -104,19 +121,69 @@ function NewRental({ goBack }) {
     });
     setCardId(e.target.value)
   };
+  const deleteBook = (data) => (e) => {
+    e.preventDefault();
+    console.log('borrado', data)
+    const updatedCopies = state.booksData.copies.filter((copy) => copy.id !== data.id);
 
-  const saveDates = () => {
-    // Puedes realizar alguna acción antes de navegar, si es necesario
-    navigate('/');
+    dispatch({
+      type: 'SET_BOOK_DATA',
+      payload: {
+        ...state.booksData,
+        copies: updatedCopies,
+      },
+    });
+  }
+  const newClient = () => {
+    navigate('/clients', { state: { fromButton: true } });
+  }
+  const handleSave = async () => {
+    const rental = state.rentalData
+    const idsArray = state.booksData.copies.map(book => book.id);
+    let dataRental = {
+      book_rental: {
+        rent_id: rental.rent_id,
+        rented_at: rental.rented_at,
+        expire_at: rental.expire_at,
+        client_id: state.clientData.id,
+        book_copy_ids: idsArray
+      }
+    }
+    console.log(dataRental);
+    console.log(state)
+    await RetalService.saveRental(dataRental);
+    clearData();
+    goBack();
   };
 
+  const clearData = () => {
+    clearObjectValues(state.clientData)
+    clearObjectValues(state.rentalData)
+
+    dispatch({
+      type: 'SET_BOOK_DATA',
+      payload: {
+        ...state.booksData,
+        copies: [],
+      },
+    });
+  }
+
+
   useEffect(() => {
-    // Inicializa las fechas solo si hay datos en el estado global
-    if (state.rentalData.rented_at && state.rentalData.expire_at) {
-      setStartDate(new Date(state.rentalData.rented_at));
-      setEndDate(new Date(state.rentalData.expire_at));
-    }
-  }, [state]);
+    calculatePrice()
+  })
+  const calculatePrice = () => {
+    var time = (endDate - startDate) / (1000 * 60 * 60 * 24)
+    var price_per_day = 0;
+    state.booksData.copies.map((data) => (
+      price_per_day += parseInt(data.price_per_day)
+
+    ))
+    if (isNaN(time)) time = 0
+    setPrice(price_per_day * Math.round(time))
+  }
+
   return (
     <div className="container mt-3" style={{ width: '50%' }}>
       <Form>
@@ -165,20 +232,32 @@ function NewRental({ goBack }) {
           </Form.Group>
           <span className="mt-3">
             <SearchButton onClick={searchClient} />
-            <Button style={{ marginLeft: '12px' }}>New client</Button>
+            <Button style={{ marginLeft: '12px' }} onClick={newClient}>New client</Button>
           </span>
         </div>
         {error ? (
           <p style={{ color: 'red', fontSize: '1.2rem', fontWeight: 'bold' }}>Error, client not found</p>
         ) : (<p style={{ fontSize: '1rem' }}>Client: {state.clientData.name} {state.clientData.lastname}</p>)}
-        <Button variant="primary" onClick={saveDates}>Add copies</Button>
-        <Button variant="primary" onClick={handleSave}>
+        <p>Books:</p>
+        <ul>
+          {state.booksData.copies.map((data) => (
+            <li key={data.id}>{data.title}, copy id: {data.id_copy}, price per day: {data.price_per_day}
+              <DeleteButton onClick={deleteBook(data)} />
+            </li>
+          ))}
+        </ul>
+        <Button variant="primary" onClick={() => (navigate('/'))}>Add copies</Button>
+        <p style={{ marginTop: '2rem' }}>Total price: {price}</p>
+      </Form>
+      <div className="d-flex justify-content-center">
+        <GoBack onClick={goBack} />
+        <Button variant="danger" onClick={clearData} style={{ marginLeft: '2rem' }}>Clear Data</Button>
+        <Button variant="primary" onClick={handleSave} style={{ marginLeft: '2rem' }}>
           Save Rental
         </Button>
-      </Form>
-      <GoBack onClick={goBack} />
+      </div>
     </div>
   );
 }
-
+//state.booksData.copies
 export default NewRental;

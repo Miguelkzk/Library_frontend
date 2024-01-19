@@ -7,6 +7,7 @@ import DeleteButton from "./Buttons/DeleteButton";
 import { BookCopyService } from "../service/BookCopyService";
 import ConfirmModal from "./ConfirmModal";
 import GoBack from "./Buttons/GoBack";
+import { useAppState } from "./AppStateContext";
 
 
 function BookCopies({ selectedBook, goBack }) {
@@ -15,6 +16,7 @@ function BookCopies({ selectedBook, goBack }) {
   const [selectedCopy, setSelectedCopy] = useState(null);
   const [idcopy_selected, setIdcopy_selected] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { state, dispatch } = useAppState();
   const handleShowModal = (copy) => {
     setSelectedCopy(copy);
     setShowModal(true);
@@ -64,6 +66,23 @@ function BookCopies({ selectedBook, goBack }) {
       console.error("Error fetching book copies:", error);
     }
   };
+  const addCopyData = (copy) => {
+    const dataRental = ({
+      id: copy.id,
+      title: selectedBook.title,
+      price_per_day: selectedBook.price_per_day,
+      id_copy: copy.id_copy
+    })
+    console.log(dataRental)
+    const { name, value } = dataRental;
+    dispatch({
+      type: 'SET_BOOK_DATA',
+      payload: {
+        ...state.booksData,
+        copies: [...state.booksData.copies, dataRental],
+      },
+    });
+  }
 
   return (
     <div className="container mt-3 ">
@@ -96,6 +115,9 @@ function BookCopies({ selectedBook, goBack }) {
                 </EditButton>
               </td>
               <td>
+                <button onClick={() => addCopyData(copy)}>Add to rental</button>
+              </td>
+              <td>
                 <DeleteButton onClick={() => handleDeleteCopy(copy)}>
                   Delete
                 </DeleteButton>
@@ -106,7 +128,7 @@ function BookCopies({ selectedBook, goBack }) {
         </tbody>
       </Table>
       <div className="d-flex justify-content-center align-items-center">
-        <GoBack onClick={goBack} />
+        <GoBack onClick={goBack}></GoBack>
       </div>
       <ConfirmModal
         show={showDeleteModal}

@@ -9,5 +9,18 @@ export const RetalService = {
     const response = await fetch(`${BASE_URL}/bookrentals/${id}/info_rental`);
     const data = await response.json();
     return data;
+  },
+  saveRental: async (dataRental) => {
+    console.log(dataRental);
+    const response = await fetch(`${BASE_URL}/bookrentals/`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataRental)
+      });
+    const data = await response.json();
+    return data;
   }
 }

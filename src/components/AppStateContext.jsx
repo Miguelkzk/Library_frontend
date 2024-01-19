@@ -16,6 +16,9 @@ const initialState = {
     name: '',
     lastname: '',
   },
+  booksData: {
+    copies: []
+  }
 };
 
 function appStateReducer(state, action) {
@@ -24,6 +27,8 @@ function appStateReducer(state, action) {
       return { ...state, rentalData: action.payload };
     case 'SET_CLIENT_DATA':
       return { ...state, clientData: action.payload };
+    case 'SET_BOOK_DATA':
+      return { ...state, booksData: action.payload };
     default:
       return state;
   }
