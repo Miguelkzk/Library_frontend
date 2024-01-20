@@ -5,11 +5,11 @@ import NavBar from '../components/NavBar';
 import BooksTable from '../pages/Books';
 import Clients from '../pages/Clients';
 
-const AppRoutes = () => {
+const AppRoutes = ({ toggleDarkMode }) => {
   return (
     <Router>
       <div>
-        <NavBar />
+        <NavBar toggleDarkMode={toggleDarkMode} />
         <Routes>
           <Route path="/" element={< BooksTable />} />
           <Route path="/rental" element={<BookRentals />} />

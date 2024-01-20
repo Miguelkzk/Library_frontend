@@ -8,6 +8,7 @@ import { BookCopyService } from "../service/BookCopyService";
 import ConfirmModal from "./ConfirmModal";
 import GoBack from "./Buttons/GoBack";
 import { useAppState } from "./AppStateContext";
+import Addbtn from "./Buttons/AddBtn";
 
 
 function BookCopies({ selectedBook, goBack }) {
@@ -101,8 +102,9 @@ function BookCopies({ selectedBook, goBack }) {
           <tr>
             <th>Copy id</th>
             <th>Status copy</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th >Edit</th>
+            <th  >Add to rental</th>
+            <th >Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -115,9 +117,10 @@ function BookCopies({ selectedBook, goBack }) {
                 </EditButton>
               </td>
               <td>
-                <button onClick={() => addCopyData(copy)}>Add to rental</button>
+                {copy.copy_status != 'Rented' ? (< Addbtn onClick={() => addCopyData(copy)}>Add to rental</Addbtn>) : (<p>Not available</p>)}
+
               </td>
-              <td>
+              <td >
                 <DeleteButton onClick={() => handleDeleteCopy(copy)}>
                   Delete
                 </DeleteButton>
@@ -126,7 +129,7 @@ function BookCopies({ selectedBook, goBack }) {
             </tr>
           ))}
         </tbody>
-      </Table>
+      </Table >
       <div className="d-flex justify-content-center align-items-center">
         <GoBack onClick={goBack}></GoBack>
       </div>
@@ -145,7 +148,7 @@ function BookCopies({ selectedBook, goBack }) {
         handleCreate={handleCreateCopy}
         copy={selectedCopy}
       />
-    </div>
+    </div >
   );
 }
 

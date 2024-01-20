@@ -39,16 +39,22 @@
 
 /* Estilos para el encabezado del calendario */
 .react-datepicker__header {
-  background-color: rgb(82, 211, 216);
-  color: #fff;
+  background-color: #0d6efd;
+
 }
 
 /* Estilos para los días de la semana en el calendario */
 .react-datepicker__day-name,
+.react-datepicker__current-month {
+  color: white;
+}
+
 .react-datepicker__day {
   width: 2rem;
   line-height: 2rem;
+
 }
+
 
 
 /* Estilos adicionales para todos los días de la semana que son domingos */
@@ -61,11 +67,40 @@
 
 /* Estilos para los días seleccionados en el calendario */
 .react-datepicker__day--selected {
-  background-color: rgb(82, 211, 216);
+  background-color: #6ea8fe;
   color: #fff;
 }
 
 /* Estilos para los días fuera del mes en el calendario */
 .react-datepicker__day--outside-month {
   color: #868e96;
+}
+
+/* Estilos adicionales para el modo oscuro en el calendario */
+
+
+.modo-oscuro .react-datepicker__month-container {
+  background-color: #4d555e;
+}
+
+
+.modo-oscuro .react-datepicker__day {
+  color: #fff;
+}
+
+.modo-oscuro .react-datepicker__day--weekend {
+  color: #fa3c3c;
+}
+
+.modo-oscuro .react-datepicker__day--selected {
+  background-color: #6ea8fe;
+  color: #fff;
+}
+
+.modo-oscuro .react-datepicker__day--outside-month {
+  color: #a9abad;
+}
+
+.modo-oscuro .react-datepicker {
+  border-color: rgb(148, 142, 142);
 }

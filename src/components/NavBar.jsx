@@ -4,6 +4,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAppState } from './AppStateContext';
+import { useTheme } from '../ThemeContext';
+import { BrightnessHighFill, Moon, MoonStarsFill, Sun } from 'react-bootstrap-icons';
+
 
 function Empty(obj) {
   const values = Object.values(obj);
@@ -15,10 +18,11 @@ function Empty(obj) {
 
   return allEmpty;
 }
-function NavBar() {
+function NavBar({ toggleDarkMode }) {
   const navigate = useNavigate();
   const { state } = useAppState();
   const [show, SetShow] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   const checkEmpty = () => {
     if ((Empty(state.clientData) && Empty(state.rentalData)) == false) {
       SetShow(true)
@@ -31,13 +35,16 @@ function NavBar() {
 
   return (
     <>
-      <Navbar style={{ backgroundColor: 'rgb(82, 211, 216)' }}>
+      <Navbar bg="primary" data-bs-theme="dark">
         <Container>
           <Nav className="me-auto">
             <Navbar.Brand onClick={() => navigate('/')} >Books</Navbar.Brand>
             <Navbar.Brand onClick={() => navigate('/rental')} >Rental</Navbar.Brand>
             <Navbar.Brand onClick={() => navigate('/clients')} >Clients</Navbar.Brand>
             {show ? (<Navbar.Brand onClick={() => navigate('/rental', { state: { New: true } })} >Continue rental</Navbar.Brand>) : null}
+            <button onClick={toggleTheme} className="theme-toggle-button">
+              {theme === 'light' ? <MoonStarsFill /> : <BrightnessHighFill />}
+            </button>
           </Nav>
         </Container>
       </Navbar>

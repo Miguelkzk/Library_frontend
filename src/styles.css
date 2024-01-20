@@ -1,0 +1,17 @@
+/* styles.css */
+
+/* Otros estilos comunes */
+/* Agrega estilos para el botón de cambio de tema */
+.theme-toggle-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white
+    /* Color del ícono cuando el tema es claro */
+}
+
+.theme-toggle-button:hover {
+  color: #c5bfbf;
+  /* Cambia el color del ícono al pasar el mouse sobre el botón */
+}
