@@ -62,6 +62,7 @@ function BookCopies({ selectedBook, goBack }) {
   const fetchCopies = async (id) => {
     try {
       const copiesData = await BookService.getCopies(id);
+      console.log(copiesData)
       setCopiesData(copiesData);
     } catch (error) {
       console.error("Error fetching book copies:", error);
@@ -83,6 +84,7 @@ function BookCopies({ selectedBook, goBack }) {
         copies: [...state.booksData.copies, dataRental],
       },
     });
+
   }
 
   return (
@@ -111,13 +113,13 @@ function BookCopies({ selectedBook, goBack }) {
           {copiesData.book_copies && copiesData.book_copies.map(copy => (
             <tr key={copy.id}>
               <td>{copy.id_copy}</td>
-              <td>{copy.copy_status}</td>
+              <td>{copy.status}</td>
               <td>
                 <EditButton variant="info" onClick={() => handleShowModal(copy)}>
                 </EditButton>
               </td>
               <td>
-                {copy.copy_status != 'Rented' ? (< Addbtn onClick={() => addCopyData(copy)}>Add to rental</Addbtn>) : (<p>Not available</p>)}
+                {copy.status != 'rented' ? (< Addbtn onClick={() => addCopyData(copy)}>Add to rental</Addbtn>) : (<p>Not available</p>)}
 
               </td>
               <td >

@@ -10,6 +10,11 @@ export const RetalService = {
     const data = await response.json();
     return data;
   },
+  searchRental: async (filter) => {
+    const response = await fetch(`${BASE_URL}/bookrentals/0/search_rental?rent_id=${filter}`);
+    const data = await response.json();
+    return data;
+  },
   saveRental: async (dataRental) => {
     console.log(dataRental);
     const response = await fetch(`${BASE_URL}/bookrentals/`,
@@ -20,6 +25,22 @@ export const RetalService = {
         },
         body: JSON.stringify(dataRental)
       });
+    const data = await response.json();
+    return data;
+  },
+  changeStatusRental: async (book_rental) => {
+    var rental = {
+      book_rental
+    }
+    const response = await fetch(`${BASE_URL}/bookrentals/${book_rental.id}`,
+      {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(rental)
+      }
+    );
     const data = await response.json();
     return data;
   }

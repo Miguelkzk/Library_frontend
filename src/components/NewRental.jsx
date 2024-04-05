@@ -154,6 +154,7 @@ function NewRental({ goBack }) {
     await RetalService.saveRental(dataRental);
     clearData();
     goBack();
+    
   };
 
   const clearData = () => {
