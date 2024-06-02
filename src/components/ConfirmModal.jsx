@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-function ConfirmModal({ show, handleClose, title, content, onConfirm, onCancel }) {
+function ConfirmModal({ show, title, content, onConfirm, onCancel }) {
   return (
     <Modal show={show} onHide={onCancel} centered backdrop="static">
       <Modal.Header closeButton>
